@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+<h1>Welcome to Balderdash Online!</h1>
+
+<style type="text/css">
+    .box {
+    border:1px solid black;
+    width:  300px;
+}
+</style>
+    
+<div class="box">
+
+    <form method="POST" action="/enter" >
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.gameID.label }}<br>
+            {{ form.gameID(size=24) }}<br>
+            {% for error in form.gameID.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.username.label }}<br>
+            {{ form.username(size=24) }}<br>
+            {% for error in form.username.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        {{ form.submit(class="form-submit") }}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+    </form>
+    </div>
+
+    <div>
+        <form action="/create" method="GET">
+        <button> Create new game</button>
+    </form>
+    </div>
+
+    <div>
+        <h2>What is Balderdash?</h2><br>
+        Each player receives either an obscure word, movie title, or law. All players must secretly write an ending for each type of question- the word definition, summary of the movie based on its title, or the ending to the law. All the ending choices are shuffled and 
+        returned to the group. Players must then vote for the ending they think is authentic. <br>
+        A player gets 1 point for each vote that their submission receives, and an additional 2 points if they vote for the correct ending.<br>
+        The player with the most points wins! </div>
+
+    <div>
+        <h2>How to play? </h2><br>
+        One person should be designated as Moderator and create a new game by clicking Create New Game. They will receive a Game ID. Each player can then enter the Game ID and create a new username, then click Enter Game (maximum is five players per game). Once the Moderator confirms that all players have joined, they will instruct all players to click the given links to advance to the Writing Round. Following that, players will go into the Voting Round, and finally see the Results.
+    </div>
+
+    <div>
+        <h2>About </h2><br>
+        This website is developed as a Flask app in Python using Postgres/SQLAlchemy and hosted on Heroku with hobby-dev SQL server. Contact the admin if you would like to help with development.<br><br>
+    </div>
+
+{% endblock %}

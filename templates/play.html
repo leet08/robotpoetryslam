@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+    {% if session_username is defined %}
+        <h1>Hi {{ session_username }}!</h1>
+    {% else %}
+        <h1>Hi guest!</h1>
+    {% endif %}
+
+    <div>
+        You are in Game #{{game.gid}}.
+    </div>
+
+    <h1>Writing Round</h1>
+
+    <form method="POST" action="/play" >
+        {{ form.hidden_tag() }}
+
+        {% for i in range(numQuestions) %}
+
+        {% if questions[i].category == "word" %}
+        <div>
+            Weird Words: Write the meaning of these words. Do not capitalize the first word of your sentence and DO NOT add punctuation!
+        </div>
+        {% endif %}
+
+        {% if questions[i].category == "movie" %}
+        <div>
+            Marvelous Movies: Write what this movie is about. Do not capitalize the first word of your sentence and REMEMBER TO add punctuation!
+        </div>
+        {% endif %}
+
+        {% if questions[i].category == "law" %}
+        <div>
+            Laughable Laws: Write the ending of this law. Do not capitalize the first word of your sentence and REMEMBER TO add punctuation!
+        </div>
+        {% endif %}
+
+        <div class="form-group" id="response{{i+1}}">
+            {{ questions[i].question }}...<br>
+            <label for="response{{i+1}}">Your ending:</label><br>
+            <input id="response{{i+1}}" name="response{{i+1}}" size="84" type="text" value=""><br>
+            {% for error in form.response.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        {% endfor %}
+
+        {{ form.submit(class="form-submit") }}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+    </form>
+
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+    <div>
+        As the moderator, your job is to keep time and make sure all players are on the same page. Please ensure that all players complete their round (Writing, then Voting) before telling them to click the link to continue to the next round.<br>
+
+        <h2>Click below to create a game:</h2>
+    
+        <form id = "create" action="/create" method="POST">
+            <label for="wordQuestions">How many word questions per game?</label>
+                <select id="wordQuestions" name = "wordQuestions">
+                  <option value=5>5</option>
+                  <option value=4>4</option>
+                  <option value=3 selected>3</option>
+                  <option value=2>2</option>
+                  <option value=1>1</option>
+                  <br>
+                </select>
+                <br>
+            <label for="movieQuestions">How many movie questions per game?</label>
+                <select id="movieQuestions" name = "movieQuestions">
+                  <option value=5>5</option>
+                  <option value=4>4</option>
+                  <option value=3>3</option>
+                  <option value=2>2</option>
+                  <option value=1 selected>1</option>
+                  <br>
+                </select>
+                <br>
+            <label for="lawQuestions">How many law questions per game?</label>
+                <select id="lawQuestions" name = "lawQuestions">
+                  <option value=5>5</option>
+                  <option value=4>4</option>
+                  <option value=3>3</option>
+                  <option value=2>2</option>
+                  <option value=1 selected>1</option>
+                  <br>
+                </select>
+                <br>
+            <label for="adminResults">Only allow admin access to results?</label>
+                <select id="adminResults" name = "adminResults">
+                  <option value=0>no</option>
+                  <option value=1 selected="">yes</option>
+                  <br>
+                </select>
+                <br>
+                *Select 'yes' to limit results page to admin only. Admin must login with username 'ADMIN' and does not participate in writing or voting.
+                <br>
+                <br>
+            <button type="submit"> Create new game</button>
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class=flashes>
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+                </ul>
+            {% endif %}
+            {% endwith %}
+        </form>
+
+    </div>
+
+    <div id="games">
+        <p> Game ID: {{ games.gid}}</p>
+    </div>
+
+    <div>
+        <h3>Click to return to the <a href="/enter"> login page</a></h3><br>
+        <h2>Recommended instructions for moderators:</h2>
+        <ul>
+          <li>Split up into teams and create breakout rooms for each (unlimited players allowed)</li>
+          <li>Create a new game selecting Yes to allow admin to results only, and login yourself using username ADMIN</li>
+          <li>Give all team leads the website link and Game ID. Have them log in and wait on the first waiting page (Do not click Play). You can view each person who has logged in on the waiting page by manually refreshing the page.</li>
+          <li>Give all the teams the rules- time limits for writing and voting. REMIND everyone they should not capitalize the first letter of their response and must add punctuation to the end for movies and laws!</li>
+          <li>Start the breakout rooms and tell everyone they can now advance to the writing page. Leads should share their screen in the breakout room and will type in the group's responses. End all breakout rooms after the time limit is up.</li>
+          <li>With everyone back in the main room, share your screen and go to the voting page. The whole group can read the responses together.</li>
+          <li>Reopen the breakout rooms. Leads should share their screen, advance to the voting page, and type in voting responses. End all breakout rooms after the time limit is up.</li>
+          <li>Have leads click the Results link on their final page. Final scores will not calculate unless all teams click this link.</li>
+          <li>With everyone back in the main room, share your screen and go to the final results pages.</li>
+        </ul>
+    </div>
+
+{% endblock %}

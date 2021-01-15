@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+    {% if session_username is defined %}
+        <h1>Hi {{ session_username }}!</h1>
+    {% else %}
+        <h1>Hi guest!</h1>
+    {% endif %}
+
+    <div>
+        You are in Game #{{game.gid}}. 
+    </div>
+
+    {% if game.admin != 1 %}
+
+      <div>
+        Here are your results:
+      </div>
+
+      {% for i in range(numQuestions) %} 
+      <h1> {{questions[i].question}}... </h1>
+      <div id="results">
+          {% for r in responses[i] %}
+            <p> {{ r }}</p>
+          {% endfor %}
+      </div>
+
+      <div>
+        <br>
+        You voted for: {{yourVotes[i]}}<br>
+        {% if myVotes[i] > 0 %}
+          These {{myVotes[i]}} people voted for you: 
+          {% for v in myVotesArray[i] %}
+            <p1 style="margin: 3px"> <b>{{v}}  </b></p1>
+          {% endfor %}
+        {% else %}
+          Nobody voted for you.
+        {% endif %}
+        <br>
+        You earned {{myPoints[i]}} points this round!<br><br>
+        
+
+      </div>
+      {% endfor %}
+
+      <div style="font-size:22px">
+        Please wait for your moderator to tell you when to continue. Then click here to go to final results: <a href="/results2">results</a><br><br>
+      </div>
+      <form action="/logout" method="POST">
+        <button type="submit"> Log out</button>
+    </form>
+    {% else %}
+
+      {% if session_username != 'ADMIN' %}
+        <div style="font-size:22px">
+          Calculating your score... please wait for your moderator to show the final results. </a><br><br>
+        </div>
+      {% else %}
+        <div style="font-size:22px">
+        Click here to go to moderator results: <a href="/results2">results</a><br><br>
+      </div>
+      {% endif %}
+
+    {% endif %}
+{% endblock %}

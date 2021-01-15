@@ -1,0 +1,80 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+    {% if session_username is defined %}
+        <h1>Hi {{ session_username }}!</h1>
+    {% else %}
+        <h1>Hi guest!</h1>
+    {% endif %}
+
+    <div>
+        You are in Game #{{session_game}}. <br>
+
+        {% if (room == 1) %}
+            Please wait for your moderator to tell you when to start. Then click here to start the writing round: <a href="/play">play</a>
+            <div>
+                Players present (refresh page to update): 
+                {% for p in players %}
+                    <p> {{ p.username }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if (room == 2) %}
+            Please wait for your moderator to tell you when to continue. Then click here to go to the voting round: <a href="/voting">vote</a>
+            <div>
+                Players present (refresh page to update): 
+                {% for p in players %}
+                    <p> {{ p.username }}
+                        {% if p.roundnumber == 2 %}
+                            finished writing
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        {% if (room == 3) %}
+            Please wait for your moderator to tell you when to continue (do not click Results early or your score will not calculate correctly). Then click here to go to results: <a href="/results">results</a>
+            <div>
+                Players present (refresh page to update): 
+                {% for p in players %}
+                    <p> {{ p.username }}
+                        {% if p.roundnumber == 3 %}
+                            finished voting
+                        {% endif %}
+                    </p>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+    </div>
+
+    {% if session_username == 'ADMIN' %}
+    <form id="remove" action="/removeuser" method="POST" enctype="multipart/form-data">
+        <label style="padding: 10px" for = "remove">Remove user?</label>
+        <select id="remove" name = "remove">
+          <option value=1>1</option>
+          <option value=2>2</option>
+          <option value=3>3</option>
+          <option value=4>4</option>
+          <option value=5>5</option>
+          <option value=6>6</option>
+          <br>
+        </select>
+        <button type="submit">Remove</button>
+
+        </form>
+    {% endif %}
+
+    <form action="/logout" method="POST">
+        <button type="submit"> Log out</button>
+    </form>
+
+{% endblock %}
