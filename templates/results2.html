@@ -20,23 +20,16 @@
                 x.style.display = "none";
             }
         }
-    
-         
     </script>
 
     {% if session_username is defined %}
-
         <h1>Hi {{ session_username }}!</h1>
-
     {% else %}
-
         <h1>Hi guest!</h1>
-
     {% endif %}
 
     <div>
         You are in Game #{{game.gid}}. Here are the final results:
-        
     </div>
 
     {% if game.admin == 1 %}
@@ -132,15 +125,11 @@
 
             {% endif %}
 
-
-
     <br><br>
     <div style="font-size:22px">Start a new game?
       <form action="/logout" method="POST">
         <button type="submit"> Start</button>
     </form>
     </div>
-
-
 
 {% endblock %}

@@ -49,6 +49,9 @@
                         {% if p.roundnumber == 3 %}
                             finished voting
                         {% endif %}
+                        {% if p.roundnumber == 4 %}
+                            finished voting and submitted results
+                        {% endif %}
                     </p>
                 {% endfor %}
             </div>
@@ -58,18 +61,11 @@
 
     {% if session_username == 'ADMIN' %}
     <form id="remove" action="/removeuser" method="POST" enctype="multipart/form-data">
+        <div class="form-group" id="remove">
         <label style="padding: 10px" for = "remove">Remove user?</label>
-        <select id="remove" name = "remove">
-          <option value=1>1</option>
-          <option value=2>2</option>
-          <option value=3>3</option>
-          <option value=4>4</option>
-          <option value=5>5</option>
-          <option value=6>6</option>
-          <br>
-        </select>
-        <button type="submit">Remove</button>
-
+            <input id="remove" name="remove" size="1" type="text" value=""><br>
+        <button type="submit">Remove</button><br><br>
+        </div>
         </form>
     {% endif %}
 
