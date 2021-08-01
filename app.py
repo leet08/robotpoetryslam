@@ -220,7 +220,7 @@ def voting():
     questionCount = get_count(questions)
 
     # arrange responses in 2D array, questinons x players plus correct answers
-    responseArray = np.empty((questionCount, playerCount+1), dtype="U84")
+    responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
     ridArray = np.zeros((questionCount, playerCount+1))
     for i in range(questionCount):
         responseArray[i,playerCount] = questions[i].correct
@@ -232,9 +232,11 @@ def voting():
     
     # randomize each row by game seed
     gameSeed = session_game.seed
-    np.random.seed(gameSeed)
+    
     for i in range(questionCount):
+        np.random.seed(gameSeed)
         np.random.shuffle(responseArray[i,:])
+        np.random.seed(gameSeed)
         np.random.shuffle(ridArray[i,:])
 
     if request.method == 'POST':
@@ -282,8 +284,8 @@ def results():
 
         # arrange responses in 2D array, questinons x players plus correct answers
         # put together results posts text
-        responseArray = np.empty((questionCount, playerCount+1), dtype="U84")
-        myVotesArray = np.empty((questionCount, playerCount+1), dtype="U84")
+        responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
+        myVotesArray = np.empty((questionCount, playerCount+1), dtype="U244")
         myVotes = np.zeros(questionCount, dtype="int")
         yourVotes = np.empty(questionCount, dtype="U24")
         myPoints = np.zeros(questionCount, dtype="int")
@@ -338,8 +340,8 @@ def results2():
         votes = Vote.query.filter_by(gid = session['gameID'])
 
         # put together text posts
-        responseArray = np.empty((questionCount, playerCount+1), dtype="U84")
-        allVotesArray = np.empty((questionCount, playerCount), dtype="U84")
+        responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
+        allVotesArray = np.empty((questionCount, playerCount), dtype="U244")
         for i in range(questionCount):
             responseArray[i,playerCount] = "Correct answer: " + questions[i].correct
             for j in range(playerCount):
