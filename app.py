@@ -232,11 +232,12 @@ def voting():
     
     # randomize each row by game seed
     gameSeed = session_game.seed
-    
+     np.random.seed(gameSeed)
     for i in range(questionCount):
-        np.random.seed(gameSeed)
         np.random.shuffle(responseArray[i,:])
-        np.random.seed(gameSeed)
+        
+    np.random.seed(gameSeed)
+    for i in range(questionCount):
         np.random.shuffle(ridArray[i,:])
 
     if request.method == 'POST':
