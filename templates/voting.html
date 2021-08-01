@@ -38,7 +38,7 @@
         {% endfor %}
         <br>
         <label for="voting{{i+1}}">Your choice:</label>
-            <input id="voting{{i+1}}" name="voting{{i+1}}" size="1" type="text" value="1" style="text-align:center;"><br>
+            <input id="voting{{i+1}}" name="voting{{i+1}}" type="number" min="1" max = "{{playerCount+1}}" value="1" style="text-align:center;"><br>
             {% for error in form.voting.errors %}
                 <span class="form-error-message">[{{ error }}]</span>
             {% endfor %}
