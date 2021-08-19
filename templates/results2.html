@@ -42,7 +42,7 @@
               {% for r in responses[i] %}
                 {% set count = 1 %}
                   <button onclick="myFunction('response{{i}}{{count}}'); this.style.display='none'">Reveal Response</button><p id="response{{i}}{{count}}" style="display:none"> {{ r }}</p>
-                {{count++}}
+                {% set count = count + 1 %}
               {% endfor %}
             </div>
             <br>
