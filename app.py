@@ -4,7 +4,6 @@ from models.models import Db, Game, User, Question, QuestionsInUse, Response, Vo
 from forms.forms import CreateGame, EnterGame, PlayForm, VoteForm, RemoveUserForm
 from os import environ
 import sys
-from passlib.hash import sha256_crypt
 from sqlalchemy import func, and_, or_, not_
 import random
 import numpy as np
