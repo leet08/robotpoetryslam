@@ -13,9 +13,9 @@ from flask_heroku import Heroku
 load_dotenv('.env')
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/balderdash2'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/balderdash3'
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-heroku = Heroku(app)
+#heroku = Heroku(app)
 app.secret_key = "secret_key"
 Db.init_app(app)
 
