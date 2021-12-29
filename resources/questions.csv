@@ -1,79 +1,52 @@
-qid,category,question,correct
-0,word,moraine,glacial debris.
-1,word,drumlin,a whale-shaped hill.
-2,word,tachygraphy,Ancient Greek or Roman shorthand.
-3,word,eosinic,like a red acid dye chiefly used to dye silk a rose red color.
-4,word,mammer,to hesitate.
-5,word,mammock,a fragment.
-6,word,floripondio,boiled Peruvian flower seeds used to induce madness.
-7,word,scarpology,the science of deducing information from the sole of a shoe.
-8,word,architrave,the decorated band framing a door.
-9,word,daedal,skillful.
-10,word,fundungi,a variety of West African rice.
-11,word,brummagem,"tawdry, like fake jewelry."
-12,word,gurning,making a face.
-13,word,doromania,an obsession to wear fur coats.
-14,word,sternutation,sneezing.
-15,word,buffo,a male opera singer who plays comic roles.
-16,word,cachinnate,to laugh loudly.
-17,word,schnecke,a sweet bun shaped like a snail.
-18,word,stadda,a double bladed saw used to make teeth in combs.
-19,word,bantling,a young child.
-20,word,whizzer,a person who operates a hat making machine.
-21,word,slargando,a musical term meaning gradually slower.
-22,word,hackmatack,a type of North American tree popular for making snowshoes.
-23,word,canaille,the masses.
-24,word,furuncle,the knobby growth on a tree branch that steals sap from the other branches.
-25,word,oomancy,fortune telling by using cracked eggs.
-26,word,emacity,an obsession with shopping and buying stuff.
-27,word,porphyrophobia,fear of anything purple.
-28,word,carpophagous,feeding on fruit.
-29,word,carcajou,a wolverine.
-30,word,zoopsia,a type of hallucination in which the victim sees nothing but animals.
-31,word,denary,tenfold.
-32,word,caseous,like cheese.
-33,word,kakamora,fabled supernatural fairies that fear anything white.
-34,word,wimpzillas,super heavy matter that contain high energy particles.
-35,word,zaffar,a pigment used to produce a blue color in enamel.
-36,word,snoove,to slide steadily forward.
-37,word,fangible,stuff that can be easily replaced.
-38,word,carriwitchet,a puzzling question.
-39,movie,Don't get me started,an insurance salesman becomes obsessed with murder after he quits smoking.
-40,movie,The apple,God saves two folksingers from an evil record producer called Mr. Boogalow.
-41,movie,Kaos,"in this Italian film, a hunchback gets stuck inside a large olive jar."
-42,movie,UHF,Weird Al Yankovic takes over a TV station that his uncle won in a poker game.
-43,movie,Where do we go from here?,a man enlists the help of a wizard to help him join the army but he is sent all through history instead.
-44,movie,Standing room only,a boss and secretary pretend to be married and acti as a butler and maid to a wealthy couple.
-45,movie,The princess comes across,a woman pretends to be a princess in order to make it big in Hollywood.
-46,movie,2000 years later,a Roman is transported to the 20th century and ends up on TV.
-47,movie,Year of the beaver,a documentary that investigates a strike at a photo-finishing factory.
-48,movie,"San Diego, I love you",a daughter tries to keep her family together while promoting her father's inventions.
-49,movie,That's right- you're wrong,a big band leader travels to Hollywood to be in the movies.
-50,movie,The man who finally died,a man returns to Germany to find out how his father died during World War II.
-51,movie,The man with nine lives,a mad scientist on the trail for a cure for cancer freezes those who get in his way.
-52,movie,Millions like us,a single gal works in a World War II era factory in England.
-53,movie,Miracle in Milan,an old woman adopts a baby she finds in a cabbage patch.
-54,movie,Nearly a nasty accident,an inept Air Force captain is always just one step away from a mechanical disaster.
-55,movie,The next,genetically altered cockroaches terrorize an island community.
-56,movie,Never steal anything small,a mobster will do anything to win the presidency of a union.
-57,movie,The lady pays off,a former school teacher pays off her gambling debt by looking after a casino owner's daughter.
-58,law,"In Oregon, it's against the law to use a can of",corn as bait for fishing.
-59,law,"In Connecticut, it's against the law for people to play",Scrabble while waiting for a politician to speak.
-60,law,"In Arkansas, it is against the law to take a blind-folded",bull down a highway.
-61,law,"In Yukon, Oklahoma, it is against the law for a patient to",pull out the tooth of a dentist.
-62,law,"In New York City, it is against the law to carry an open can of",spray paint.
-63,law,"In Troutcreek, Utah, it used to be unlawful for a pharmacist to",sell gunpowder to a customer to treat a headache.
-64,law,"In Idaho, it is against the law to hunt from",the back of an animal.
-65,law,"In Memphis, Tennessee, it is illegal for a frog to",croak after midnight.
-66,law,"In Louisville, Kentucky, it is against the law to fish with",a bow and arrow.
-67,law,"In Baldwin Park, California, it is illegal to ride a",bicycle into a swimming pool.
-68,law,"In Spartanburg, South Carolina, it is unlawful to eat",watermelon in a cemetary.
-69,law,"In Washington, D.C., it is against the law to fish, while",riding a horse.
-70,law,"In Staten Island, New York, it is illegal to lie down while",watering your lawn.
-71,law,"In Orlando, Florida, you are forbidden to tie an elephant","to a parking meter, unless the meter has been paid for."
-72,law,"In Wyoming, it is illegal to take a photograph of",a rabbit during the first three months of the year.
-73,law,"In Athens, Greece, it is against the law to cut",down an olive tree.
-74,law,"In Boston, Massachusetts, you are not allowed to take part in",a frog-jumping contest in any nightclub.
-75,law,"In Simsbury, Connecticut, it is illegal for a politician to",campaign at the town dump.
-76,law,"In Gary, Indiana, you are forbidden to go to the theater if",you have eaten garlic in the last four hours.
-77,law,"In Massachusetts, it is still illegal to eat",peanuts in church.
+qid,phrase,word
+0,"When I sense danger, I start to",action verb
+1,Gettin' stuff done like a total,job name
+2,I never fall down I stand tall like the,building name
+3,My flow's my superpower call me Captain,positive adjective
+4,I'm a cosmic force so call me the Big,object in space
+5,I'm an adult I'm a full fledged,profession
+6,I've got mad knowledge I'm a real,famous person
+7,I'm sweeter than candy sharper than a,object
+8,The one thing I love more than rhyming is,objects
+9,I'm from the future my game is next-gen,positive adjective
+10,Watch me flow I'm like a,body of water
+11,Not sweat that's talent coming out of my,body parts
+12,My rhymes melt on the tongue like,a food
+13,I'm a wild animal that you can never,verb
+14,Right now I'm a seed but I'll soon be a,plant
+15,"My game's turbo charged, faster than a",fast object
+16,Don't need permission to rock this,building
+17,I got words in my heart and a mic in my,body parts
+18,I'm spitting fire that's hotter than the,something hot
+19,My rap game is second only to my,game
+20,My skin is exfoliated my eyebrows are,adjective
+21,"Did ya know, I'm fluent in",language
+22,My robot hands are shaped to crush,objects
+23,"I'm a trending topic, the main story on",website name
+24,Alexa calls out my name to learn about,school subject
+25,"Watch me work, I'm a master",profession
+26,It's my coronation call me the Queen of,type of music
+27,My eye is on the prize because I'm,positive adjective
+28,The rhymes I paint are worth a thousand,objects
+29,When life gives me lemons I make,food
+30,I keep success in my pocket next to my,small object
+31,I won a Nobel Prize for,verb ending in -ing
+32,The name of my game is Rap 'til I,verb
+33,Welcome to class I'm Professor,positive adjective
+34,My battle routine is brush floss and,verb
+35,When my words come at you your feet will,verb
+36,I'm knee deep in rhymes better get a,type of container
+37,It's a showdown and my words are my,type of weapon
+38,"I'm on my way up, I could climb",something tall
+39,When I start rhyming they all get up to,verb
+40,My rhyming game is by far the,adjective ending in -est
+41,Run and find cover 'cuz I'm about to,verb
+42,Everybody give it up for me say,interjection
+43,"I'm the best M C, in all of",location
+44,I'm so rich in rhymes I could buy a,something expensive
+45,"I hear the beat, I come out",verb ending in -ing
+46,My lines are deep like an episode of,TV show
+47,My rhymes will blast ya all the way to,location
+48,In high school I was voted Most,positive adjective
+49,"The Avengers call me, Captain",positive adjective
+50,I plant seeds of rhythm that grow into,type of plant
