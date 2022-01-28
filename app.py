@@ -3,18 +3,26 @@ from flask import Flask, flash, render_template, request, url_for, redirect, jso
 from models.models import Db, Game, User, Question, QuestionsInUse, Response, Vote
 from forms.forms import CreateGame, EnterGame, PlayForm, VoteForm, RemoveUserForm
 from os import environ
+import os
 import sys
+import pyttsx3
 from sqlalchemy import func, and_, or_, not_
 import random
 import numpy as np
 from flask_heroku import Heroku
+from PIL import Image, ImageFont, ImageDraw 
 
 load_dotenv('.env')
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/balderdash3'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost/balderdash3'
+
+# config upload file folder
+IMG_FOLDER = os.path.join('static', 'img')
+app.config['UPLOAD_FOLDER'] = IMG_FOLDER
+
 #app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-heroku = Heroku(app)
+#heroku = Heroku(app)
 app.secret_key = "secret_key"
 Db.init_app(app)
 
@@ -22,8 +30,6 @@ Db.init_app(app)
 testProfile = '1'
 emptyProfile = '2'
 adminProfile = '3'
-blankQuestion = '79' # word category
-randomSeed = 0
 
 #GET /
 @app.route('/')
@@ -37,31 +43,13 @@ def create():
     if request.method == 'POST':
         # create random seed int
         adminAccess = int(request.form.get("adminResults"))
-        numberWordQuestions = int(request.form.get("wordQuestions"))
-        numberMovieQuestions = int(request.form.get("movieQuestions"))
-        numberLawQuestions = int(request.form.get("lawQuestions"))
-        randomSeed = np.random.randint(100)
-        game = Game(seed = randomSeed, admin = adminAccess)
+        numberRounds = int(request.form.get("numberRounds"))
+        game = Game(rounds = numberRounds, admin = adminAccess)
         Db.session.add(game)
         Db.session.commit()
 
         newGame = Game.query.order_by(-Game.gid).first() # can use just game?
 
-        # create new questions in questions in use DB
-        # shuffle in each category
-        newWordQuestions = Question.query.filter_by(category="word").order_by(func.random())[:numberWordQuestions]
-        for i in range(numberWordQuestions):
-            Db.session.add(QuestionsInUse(question = newWordQuestions[i].question, correct = newWordQuestions[i].correct, gid = newGame.gid, category = newWordQuestions[i].category))
-
-        newMovieQuestions = Question.query.filter_by(category="movie").order_by(func.random())[:numberWordQuestions]
-        for i in range(numberMovieQuestions):
-            Db.session.add(QuestionsInUse(question = newMovieQuestions[i].question, correct = newMovieQuestions[i].correct, gid = newGame.gid, category = newMovieQuestions[i].category))
-
-        newLawQuestions = Question.query.filter_by(category="law").order_by(func.random())[:numberLawQuestions]
-        for i in range(numberLawQuestions):
-            Db.session.add(QuestionsInUse(question = newLawQuestions[i].question, correct = newLawQuestions[i].correct, gid = newGame.gid, category = newLawQuestions[i].category))
-
-        Db.session.commit()
         flash('Congratulations, you have created a new game! You can now login with a username. Here is your Game ID:')
 
         return render_template('create.html', form = form, title='Create', games = newGame)
@@ -80,6 +68,7 @@ def enter():
         username = request.form['username']
         session['username'] = username	    
         session['gameID'] = gameID
+        session['formstep'] = 1
 
         # show players to player1 waiting room?
         currentGame = Game.query.filter_by(gid=gameID).first()
@@ -112,6 +101,23 @@ def enter():
             user.playernumber = currentPlayerNumber + 1
             Db.session.add(user)
             Db.session.add(currentGame)
+
+            # create new questions in questions in use DB for each user
+            numberRounds = currentGame.rounds
+
+            newUserQuestion1 = Question.query.order_by(func.random())[:numberRounds]
+            for i in range(numberRounds):
+                word1 = newUserQuestion1[i].word
+                phrase1 = newUserQuestion1[i].phrase
+
+            newUserQuestion2 = Question.query.order_by(func.random())[:numberRounds]
+            if (newUserQuestion2 != newUserQuestion1):
+                for i in range(numberRounds):
+                    word2 = newUserQuestion2[i].word
+                    phrase2 = newUserQuestion2[i].phrase
+                    
+            Db.session.add(QuestionsInUse(word1 = word1, phrase1 = phrase1, word2 = word2, phrase2 = phrase2, gid = currentGame.gid, uid = user.uid))
+            Db.session.commit()
 
             # assign to session uid
             session['uid'] = user.uid
@@ -162,7 +168,7 @@ def play():
     session_user = User.query.filter_by(uid=session['uid']).first()
     session_game = Game.query.filter_by(gid=session['gameID']).first()
 
-    questions = QuestionsInUse.query.filter_by(gid = session_game.gid)
+    questions = QuestionsInUse.query.filter_by(gid = session['gameID'], uid = session['uid'])
     numQuestions = get_count(questions)
 
     formNames = []
@@ -171,15 +177,116 @@ def play():
         stringResponse = "response" + str(i+1)
         formNames.append(stringResponse)
 
-    if request.method == 'POST':
-        # Create responses in database
-        for i in range(numQuestions):
-            formResponse = request.form.get(formNames[i], None)
-            responses.append(Response(response=formResponse,uid=session['uid'], gid=session['gameID'], quid = questions[i].quid))
+    if session['uid'] == adminProfile:
+        players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
+        return render_template('waiting.html', title='Waiting', session_game = session_game.gid, numQuestions = numQuestions, players = players, session_username=session_user.username, form = form, room = 2)
+    
 
-        if session['uid'] != adminProfile:
-            for r in responses:
-                Db.session.add(r)
+    # first button enters response and reveals next line
+    if request.method == 'POST':
+
+        if session['formstep'] == 1:
+            # Create responses in database
+            for i in range(numQuestions):
+                formResponse = request.form.get(formNames[i], None)
+                totalResponse1 = questions[i].phrase1 + ' ' + formResponse
+                session['response1']=totalResponse1
+
+            session['formstep'] = 2
+            return render_template('play2.html', title='Play2', response = totalResponse1, game = session_game, questions = questions, numQuestions = numQuestions, session_username=session_user.username, form = form, formStep = session['formstep'])
+
+        if session['formstep'] == 2:
+            # Create responses in database
+            for i in range(numQuestions):
+                formResponse = request.form.get(formNames[i], None)
+                totalResponse2 = formResponse
+                session['response2']=totalResponse2
+
+            session['formstep'] = 3
+            return render_template('play3.html', title='Play3', game = session_game, questions = questions, numQuestions = numQuestions, session_username=session_user.username, form = form, formStep = session['formstep'])
+
+        if session['formstep'] == 3:
+            # Create responses in database
+            for i in range(numQuestions):
+                formResponse = request.form.get(formNames[i], None)
+                totalResponse3 = questions[i].phrase2 + ' ' + formResponse
+                session['response3']=totalResponse3
+
+            session['formstep'] = 4
+            return render_template('play4.html', title='Play4', response = totalResponse3, game = session_game, questions = questions, numQuestions = numQuestions, session_username=session_user.username, form = form, formStep = session['formstep'])
+
+        if session['formstep'] == 4:
+            # Create responses in database
+            for i in range(numQuestions):
+                formResponse = request.form.get(formNames[i], None)
+                totalResponse4 = formResponse
+
+            newResponse = Response(response1=session['response1'],response2 = session['response2'], response3 = session['response3'], response4 = totalResponse4, uid=session['uid'], gid=session['gameID'], quid = questions[i].quid)
+            Db.session.add(newResponse)
+            Db.session.commit()
+
+            # Generate picture and TTS
+
+            # randomly choose one of 6 backgrounds and text locations
+            rand = random.randrange(1,6,1)
+
+            # also generate filename and text
+            #newGame = Response.query.order_by(-Game.gid).first() # can use just game?
+            
+            text1 = session['response1'] +'\n'+session['response2'] +'\n'+session['response3'] +'\n'+totalResponse4
+
+            if rand == 1:
+                my_image = Image.open("resources/robot1.jpg")
+                font = ImageFont.truetype("resources/Darling.ttf", 24)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((55,65), text1, (0, 0, 0), font=font)
+
+            if rand == 2:
+                my_image = Image.open("resources/robot2.jpg")
+                font = ImageFont.truetype("resources/unicode.futurab.ttf", 28)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((65,85), text1, (255, 255, 255), font=font)
+
+            if rand == 3:
+                my_image = Image.open("resources/robot3.jpg")
+                font = ImageFont.truetype("resources/unicode.futurab.ttf", 28)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((45,85), text1, (255, 255, 255), font=font)
+
+            if rand == 4:
+                my_image = Image.open("resources/robot4.jpg")
+                font = ImageFont.truetype("resources/unicode.futurab.ttf", 28)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((65,85), text1, (1, 50, 32), font=font)
+
+            if rand == 5:
+                my_image = Image.open("resources/robot5.jpg")
+                font = ImageFont.truetype("resources/unicode.futurab.ttf", 28)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((45,385), text1, (255, 200, 0), font=font)
+
+            if rand == 6:
+                my_image = Image.open("resources/robot6.jpg")
+                font = ImageFont.truetype("resources/unicode.futurab.ttf", 28)
+                image_editable = ImageDraw.Draw(my_image)
+                image_editable.text((65,425), text1, (50, 50, 50), font=font)
+
+            filename = str(newResponse.rid) + ".jpg"
+            file_filename = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            my_image.save(file_filename)
+
+            # Generate TTS
+            text2 = session['response1'] +'...'+session['response2'] +'...'+session['response3'] +'...'+totalResponse4
+            engine = pyttsx3.init()
+            #engine.say("I will speak this text")
+            engine.setProperty('rate', 150) # default 200
+            if rand < 4:
+                engine.setProperty('voice', 'english-us')
+            if rand >=4:
+                engine.setProperty('voice', 'english_rp+f3') 
+            filenameMp3 = os.path.join(app.config['UPLOAD_FOLDER'],str(newResponse.rid)+".mp3")
+            engine.save_to_file(text2, filenameMp3)
+            engine.runAndWait()
 
             # update round number for player
             session_user.roundnumber = 2
@@ -187,12 +294,12 @@ def play():
             session['room'] = 2
             Db.session.commit()
 
-        # show players to player1 waiting room
-        players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
+            # show players to player1 waiting room
+            players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
 
-        return render_template('waiting.html', title='Waiting', session_game = session_game.gid, numQuestions = numQuestions, players = players, session_username=session_user.username, form = form, room = 2)
+            return render_template('waiting.html', title='Waiting', session_game = session_game.gid, numQuestions = numQuestions, players = players, session_username=session_user.username, form = form, room = 2)
     else:
-        return render_template('play.html', title='Play', game = session_game, questions = questions, numQuestions = numQuestions, session_username=session_user.username, form = form)
+        return render_template('play.html', title='Play', game = session_game, questions = questions, numQuestions = numQuestions, session_username=session_user.username, form = form, formStep = session['formstep'])
 
 def getR(player, question):
     return Response.query.filter_by(uid = player.uid, qid = question.qid)
@@ -212,49 +319,36 @@ def voting():
     session_game = Game.query.filter_by(gid=session['gameID']).first()
 
     # call all responses assigned to this game, get all players and all questions also
+    # only 1 question for now...
     responses = Response.query.filter_by(gid=session['gameID'])
+    responsesCount = get_count(responses)
     players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
     playerCount = get_count(players)
-    questions = QuestionsInUse.query.filter_by(gid = session['gameID'])
-    questionCount = get_count(questions)
-
-    # arrange responses in 2D array, questinons x players plus correct answers
-    responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
-    ridArray = np.zeros((questionCount, playerCount+1))
-    for i in range(questionCount):
-        responseArray[i,playerCount] = questions[i].correct
-        ridArray[i,playerCount] = 0 # correct answer uid
-        for j in range(playerCount):
-            # get the most recent entries
-            responseArray[i,j] = Response.query.filter_by(uid= players[j].uid, quid = questions[i].quid).order_by(-Response.rid).first().response
-            ridArray[i,j] = Response.query.filter_by(uid= players[j].uid, quid = questions[i].quid).order_by(-Response.rid).first().rid
     
-    # randomize each row by game seed
-    gameSeed = session_game.seed
-    np.random.seed(gameSeed)
-    for i in range(questionCount):
-        np.random.shuffle(responseArray[i,:])
-        
-    np.random.seed(gameSeed)
-    for i in range(questionCount):
-        np.random.shuffle(ridArray[i,:])
+    rids = []
+    filenames = []
+    filenameMp3s = []
+    responseTexts = []
+
+    # get filenames
+    for i in range(responsesCount):
+        rid = responses[i].rid
+        rids.append(rid)
+        responseTexts.append(responses[i].response1 +'... ' + responses[i].response2 +"... " + responses[i].response3 +"... " + responses[i].response4)
+        full_filename = os.path.join(app.config['UPLOAD_FOLDER'], str(rid)+'.jpg')
+        filenames.append(full_filename)
+        full_filenameMp3 = os.path.join(app.config['UPLOAD_FOLDER'], str(rid)+'.mp3')
+        filenameMp3s.append(full_filenameMp3)
 
     if request.method == 'POST':
 
         if session['uid'] != adminProfile:
             # Get field button values and query vote was for which player's response and enter to vote database
-            for i in range(questionCount):
-                stringVote = "voting" + str(i + 1)
-                stringVote = int(request.form.get(stringVote, None))
-                ridVote = ridArray[i,stringVote-1]
-                if ridVote == 0:
-                    vote = 0
-                else:
-                    personVote = Response.query.filter_by(rid = ridVote).first()
-                    vote = personVote.uid
-                    vote = User.query.filter_by(uid = vote).first()
-                    vote = vote.playernumber
-                vote = Vote(vote = vote,uid = session_user.uid, gid = session_game.gid, quid = questions[i].quid)
+            # each vote records the player number receiving the vote and quantity
+            stringVote = "voting" + str(0 + 1)
+            stringVote = int(request.form.get(stringVote, None))
+            if stringVote != 0:
+                vote = Vote(vote = stringVote-1,votequantity = 1, uid = session_user.uid, gid = session_game.gid)
                 Db.session.add(vote)
 
             # update round number for player
@@ -265,7 +359,7 @@ def voting():
 
         return render_template('waiting.html', title='Waiting', playerCount = playerCount, players = players, session_game = session_game.gid, session_username=session_user.username, form = form, room = 3)
     else:
-        return render_template('voting.html', title='Voting', playerCount = playerCount,numQuestions = questionCount, questions = questions, responses = responseArray, game = session_game, session_username=session_user.username, form = form)
+        return render_template('voting.html', title='Voting', responseTexts = responseTexts, players = players, filenames = filenames, filenameMp3s = filenameMp3s, playerCount = playerCount,game = session_game, session_username=session_user.username, form = form)
 
 @app.route('/results', methods=['GET'])
 def results():
@@ -274,51 +368,20 @@ def results():
         session_uid = User.query.filter_by(uid=session['uid']).first()
         session_game = Game.query.filter_by(gid=session['gameID']).first()
 
-        # Get each question, responses, votes
-        responses = Response.query.filter_by(gid=session['gameID'])
-        players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
-        playerCount = get_count(players)
-        questions = QuestionsInUse.query.filter_by(gid = session['gameID'])
-        questionCount = get_count(questions)
+        # Get votes and my player number
         votes = Vote.query.filter_by(gid = session['gameID'])
+        myPlayerNumber = session_uid.playernumber
 
-        # arrange responses in 2D array, questinons x players plus correct answers
-        # put together results posts text
-        responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
-        myVotesArray = np.empty((questionCount, playerCount+1), dtype="U244")
-        myVotes = np.zeros(questionCount, dtype="int")
-        yourVotes = np.empty(questionCount, dtype="U24")
-        myPoints = np.zeros(questionCount, dtype="int")
-        allVotes = Vote.query.filter_by(uid = session['uid'], gid = session['gameID'])
-        yourScore = 0
-        if session['uid'] != adminProfile:
-            for i in range(questionCount):
-                responseArray[i,playerCount] = "Correct answer: " + questions[i].correct
-                # check your votes
-                if allVotes[i].vote == 0:
-                    yourVotes[i] = "the correct answer!"
-                    myPoints[i] = myPoints[i] + 2
-                    yourScore = yourScore + 2
-                if allVotes[i].vote != 0:
-                    #yourVotes[i] = yourVotes[i].vote
-                    whoYouVotedFor = User.query.filter_by(gid = session['gameID'], playernumber = allVotes[i].vote).first()
-                    yourVotes[i] = whoYouVotedFor.username
-                for j in range(playerCount):
-                    # get the most recent entries
-                    responseArray[i,j] = players[j].username + ": "+Response.query.filter_by(uid= players[j].uid, quid = questions[i].quid).order_by(-Response.rid).first().response
-                    # if it's a vote for me
-                    if Vote.query.filter_by(uid = players[j].uid, quid = questions[i].quid).first().vote == session_uid.playernumber:
-                        myVotesArray[i,j] = players[j].username
-                        myVotes[i] = myVotes[i]+1
-                        myPoints[i] = myPoints[i] + 1
-                        yourScore = yourScore + 1
+        # add score to user
+        score = 0
+        for v in votes:
+            if v.vote == myPlayerNumber:
+                score = score + 1
+        session_uid.score = score
+        Db.session.add(session_uid)
+        Db.session.commit()
 
-            # add score to user
-            session_uid.score = yourScore
-            Db.session.add(session_uid)
-            Db.session.commit()
-
-        return render_template('results.html', title='Results', numQuestions = questionCount, myPoints = myPoints, myVotesArray = myVotesArray, myVotes = myVotes, yourVotes = yourVotes, responses = responseArray, questions = questions, session_username=session_uid.username, game=session_game)
+        return render_template('results.html', title='Results',  session_username=session_uid.username, game=session_game)
     else:
         #all_posts = Post.query.all()
         return render_template('results.html', title='Results', session_username=session_uid.username, game=session_game)
@@ -333,25 +396,20 @@ def results2():
 
         # Get each question, responses, votes
         responses = Response.query.filter_by(gid=session['gameID'])
+        responsesCount = get_count(responses)
         players = User.query.filter_by(gid=session['gameID']).order_by(User.playernumber)
         playerCount = get_count(players)
         questions = QuestionsInUse.query.filter_by(gid = session['gameID'])
         questionCount = get_count(questions)
         votes = Vote.query.filter_by(gid = session['gameID'])
 
-        # put together text posts
-        responseArray = np.empty((questionCount, playerCount+1), dtype="U244")
-        allVotesArray = np.empty((questionCount, playerCount), dtype="U244")
-        for i in range(questionCount):
-            responseArray[i,playerCount] = "Correct answer: " + questions[i].correct
-            for j in range(playerCount):
-                # get the most recent entries
-                responseArray[i,j] = players[j].username + ": "+Response.query.filter_by(uid= players[j].uid, quid = questions[i].quid).order_by(-Response.rid).first().response
-                vote = Vote.query.filter_by(uid = players[j].uid, quid = questions[i].quid).first().vote
-                if vote != 0:
-                    allVotesArray[i,j] = User.query.filter_by(gid = session['gameID'], playernumber = vote).first().username
-                else:
-                    allVotesArray[i,j] = ""
+        # get filenames
+        responseTexts = []
+        filenames = []
+        for i in range(responsesCount):
+            responseTexts.append(responses[i].response1 +'... ' + responses[i].response2 +"... " + responses[i].response3 +"... " + responses[i].response4)
+            full_filename = os.path.join(app.config['UPLOAD_FOLDER'], str(responses[i].rid)+'.jpg')
+            filenames.append(full_filename)
 
         # points calculation
         highPlayerScore = 0
@@ -368,7 +426,7 @@ def results2():
         if len(highPlayer) >1:
             tie = True 
         
-        return render_template('results2.html', title='Results', playerCount = playerCount, allVotesArray = allVotesArray, questions = questions, numQuestions = questionCount, responses = responseArray,tie = tie, highPlayerScore = highPlayerScore, highPlayer = highPlayer, players = players, session_username=session_uid.username, game=session_game)
+        return render_template('results2.html', title='Results', filenames = filenames, playerCount = playerCount, numQuestions = questionCount,tie = tie, highPlayerScore = highPlayerScore, highPlayer = highPlayer, players = players, session_username=session_uid.username, game=session_game)
     else:
         #all_posts = Post.query.all()
         return render_template('results2.html', title='Results', session_username=session_uid.username, game=session_game)

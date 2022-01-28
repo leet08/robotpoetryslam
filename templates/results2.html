@@ -34,35 +34,13 @@
 
     {% if game.admin == 1 %}
 
-        {% for i in range(numQuestions) %} 
-        <h1> {{questions[i].question}}... </h1>
-        <button onclick="myFunction('results{{i}}')">Reveal Answers</button> <br>      
-          <div id="results{{i}}" style="display:none">
+            {% for i in range(playerCount) %} 
             <div>
-              
-              {% for r in responses[i] %}
-                  <button onclick="myFunction('response{{i}}{{loop.index}}'); this.style.display='none'">Reveal Response</button><p id="response{{i}}{{loop.index}}" style="display:none"> {{ r }}</p>
-                  
-              {% endfor %}
-            </div>
-            <br>
+                <img src="{{ filenames[i] }}" alt="img"><br>
 
-          <button onclick="myFunction('final{{i}}')">Reveal Votes</button> 
-          <div id="final{{i}}" style="display:none">
-            <br>
-              {% for j in range(playerCount) %}
-                
-                    <b>{{players[j].username}}</b> voted for  
-                    {% if allVotesArray[i,j] != "" %}
-                        the response written by <b>{{allVotesArray[i,j]}}</b>
-                    {% else %}
-                        the correct answer
-                    {% endif %}
-                    <br>
-              {% endfor %}
-          </div>
-      </div>
-      {% endfor %}
+            </div>
+            
+            {% endfor %}
       <br>
 
     <h1> Total scores:</h1> <button onclick="myFunction('results_total')">Reveal Final Scores</button>        

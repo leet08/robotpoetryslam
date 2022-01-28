@@ -16,7 +16,7 @@ class EnterGame(FlaskForm):
     submit = SubmitField('Enter game')
 
 class PlayForm(FlaskForm):
-    response = StringField('Your ending:')
+    response = StringField('Your submission:')
     submit = SubmitField('Submit')
 
 class VoteForm(FlaskForm):
