@@ -1,0 +1,114 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+    
+    
+{% endblock %}
+
+{% block content %}
+
+    <script>
+    function myFunction(divid) {
+            var x = document.getElementById(divid);
+            if (x.style.display == "none") {
+                x.style.display = "block";
+            } else {
+                x.style.display = "none";
+            }
+        }
+    </script>
+
+    {% if session_username is defined %}
+        <h1>Hi {{ session_username }}!</h1>
+    {% else %}
+        <h1>Hi guest!</h1>
+    {% endif %}
+
+    <div>
+        You are in Game #{{game.gid}}. Here are the final results:
+    </div>
+
+    {% if game.admin == 1 %}
+
+            {% for i in range(playerCount) %} 
+            <div>
+                <img src="{{ filenames[i] }}" alt="img"><br>
+
+            </div>
+            
+            {% endfor %}
+      <br>
+
+    <h1> Total scores:</h1> <button onclick="myFunction('results_total')">Reveal Final Scores</button>        
+          <div id="results_total" style="display:none">
+            <div>
+                {% for p in players %}
+                    {% if p.username != 'empty' %}
+                    <p> {{ p.username }} scored {{p.score}} points</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if tie == False %}
+            <h1> The winner is 
+              {% for h in highPlayer %}
+                    {{h}} with {{highPlayerScore}} points!
+                {% endfor %}</h1>
+            {% endif %}
+
+            {% if tie == True %}
+            <h1> There's a tie between 
+              {% for h in highPlayer %}
+                {% if h != 'empty' %}
+                    {{h}}
+                {% endif %}
+                {% endfor %}
+              with {{highPlayerScore}} points!</h1>
+    
+             {% endif %}
+            </div>
+
+            {% else %}
+
+            <div>
+            <div>
+                {% for p in players %}
+                    {% if p.username != 'empty' %}
+                    <p> {{ p.username }} scored {{p.score}} points</p>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if tie == False %}
+            <h1> The winner is 
+              {% for h in highPlayer %}
+                    {{h}} with {{highPlayerScore}} points!
+                {% endfor %}</h1>
+            {% endif %}
+
+            {% if tie == True %}
+            <h1> There's a tie between 
+              {% for h in highPlayer %}
+                {% if h != 'empty' %}
+                    {{h}}
+                {% endif %}
+                {% endfor %}
+              with {{highPlayerScore}} points!</h1>
+    
+             {% endif %}
+            </div>
+
+            {% endif %}
+
+    <br><br>
+    <div style="font-size:22px">Start a new game?
+      <form action="/logout" method="POST">
+        <button type="submit"> Start</button>
+    </form>
+    </div>
+
+{% endblock %}

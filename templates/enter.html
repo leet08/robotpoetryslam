@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+<h1>Welcome to Robot Poetry Slam!</h1>
+
+<style type="text/css">
+    .box {
+    border:1px solid black;
+    width:  300px;
+}
+</style>
+    
+<div class="box">
+
+    <form method="POST" action="/enter" >
+        {{ form.hidden_tag() }}
+
+        <div class="form-group">
+            {{ form.gameID.label }}<br>
+            {{ form.gameID(size=24) }}<br>
+            {% for error in form.gameID.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        <div class="form-group">
+            {{ form.username.label }}<br>
+            {{ form.username(size=24) }}<br>
+            {% for error in form.username.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+
+        {{ form.submit(class="form-submit") }}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+
+    </form>
+    </div>
+
+    <div>
+        <form action="/create" method="GET">
+        <button> Create new game</button>
+    </form>
+    </div>
+
+    <div>
+        <h2>What is Robot Poetry Slam?</h2><br>
+        Each player receives a prompt to enter a word or phrase. With that word, the game generates a line of the rhyme, and the player must then write a sentence to complete the rhyme. Once the full rhyme is complete, players will view all the rhyme videos and vote on which one is best.<br>
+        The player with the most points wins! </div>
+
+    <div>
+        <h2>How to play? </h2><br>
+        One person should be designated as Moderator and create a new game by clicking Create New Game. They will receive a Game ID. Each player can then enter the Game ID and create a new username, then click Enter Game. Once the Moderator confirms that all players have joined, they will instruct all players to click the given links to advance to the Writing Round. Following that, players will go into the Voting Round, and finally see the Results.
+    </div>
+
+    <div>
+        <h2>About </h2><br>
+        This website is developed as a Flask app in Python using Postgres/SQLAlchemy and hosted on Heroku with hobby-dev SQL server. Contact the admin if you would like to help with development.<br><br>
+    </div>
+
+{% endblock %}

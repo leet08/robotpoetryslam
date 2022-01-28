@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block styles %}
+    <link href="{{ url_for('static', filename='./css/index.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block content %}
+
+    {% if session_username is defined %}
+        <h1>Hi {{ session_username }}!</h1>
+    {% else %}
+        <h1>Hi guest!</h1>
+    {% endif %}
+
+    <div>
+        You are in Game #{{game.gid}}.   
+    </div>
+
+    <h1>Voting Round</h1>
+
+    <div>
+      Review the responses below and submit your votes (you may not vote for your own rap). 
+    </div>
+
+    <form action="/voting" method="POST" >
+     
+    {% for i in range(playerCount) %} 
+
+    <div>
+      <h2> {{ players[i].username }} wrote: </h2>
+    </div>
+    <div>
+        <img src="{{ filenames[i] }}" alt="img"><br>
+        <audio controls>
+        <source src="{{ filenameMp3s[i] }}" type="audio/mp3">
+        </audio><br>
+        {{responseTexts[i]}}
+
+    </div>
+    
+    {% endfor %}
+
+    <div class="form-group" id="responses{{0+1}}">
+        <label for="voting{{0+1}}">Your choice:</label>
+            <input id="voting{{0+1}}" name="voting{{0+1}}" type="number" min="1" max = "{{playerCount}}" value="1" style="text-align:center;"><br>
+            {% for error in form.voting.errors %}
+                <span class="form-error-message">[{{ error }}]</span>
+            {% endfor %}
+    </div>
+
+    {{ form.submit(class="form-submit") }}
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    </form>  
+    <br>
+
+{% endblock %}

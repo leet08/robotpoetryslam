@@ -1,0 +1,126 @@
+
+* {
+    border: 0;
+    box-sizing: border-box;
+    padding: 0;
+
+}
+
+body {
+    
+}
+
+div {
+    margin: 20px 20px;
+    font-family: palatino;
+    font-size: 16px;
+    padding: 0 0 3px 0;
+
+}
+h3 {
+
+    font-size: 18px;
+    display: inline-flex;
+    font-family: palatino;
+    font-weight: lighter;
+    color: black;
+    padding: 0 0 3px 0;
+}
+
+h2 {
+
+    border-bottom: 3px solid lightblue;
+    font-size: 18px;
+    display: inline-flex;
+    font-family: palatino;
+    font-weight: lighter;
+    color: black;
+    padding: 0 0 3px 0;
+}
+h1 {
+    
+    border-bottom: 3px solid lightblue;
+    display: inline-flex;
+    font-family: palatino;
+    font-size: 20px;
+    font-weight: lighter;
+    color: black;
+    margin: 10px;
+    padding: 0 0 3px 0;
+}
+
+/*#posts {
+    margin: 25px 0 0 0;
+
+}*/
+
+p {
+    font-family: palatino;
+    font-size: 15px;
+    font-weight: lighter;
+    margin: 5px 30px;
+    border: 3px solid darkblue;
+    padding: 10px;
+    background-color: lightblue;
+
+}
+
+#forms {
+    margin: 50px 0 0 0;
+    border: 5px
+}
+
+form {
+    margin: 10px 20px;
+}
+
+button {
+    background-color: lightblue;
+    border-radius: 5px;
+    color: black;
+    font-family: palatino;
+    font-size: 22px;
+    padding: 3px;
+    min-width: 100px;
+}
+
+.form-group {
+    margin: 10px;
+}
+
+.form-group label {
+    font-family: palatino;
+    font-size: 16px;
+}
+
+.form-group input {
+    border-bottom: 3px solid darkblue;
+    margin: 0 0 0 3px;
+    padding: 3px;
+}
+
+.form-group textarea {
+    border: 3px solid darkblue;
+    margin: 10px 0 0 1px;
+    padding: 3px;
+}
+
+.form-submit {
+    background-color: lightblue;
+    border-radius: 5px;
+    color: black;
+    font-family: palatino;
+    font-size: 22px;
+    margin: 13px;
+    padding: 3px;
+    min-width: 100px;
+}
+
+.form-error-message {
+    color: red;
+    font-family: palatino;
+    font-style: italic;
+    font-size: 15px;
+    font-weight: normal;
+    margin: 5px;
+}
