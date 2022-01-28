@@ -21,8 +21,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhos
 IMG_FOLDER = os.path.join('static', 'img')
 app.config['UPLOAD_FOLDER'] = IMG_FOLDER
 
-#app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-#heroku = Heroku(app)
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+heroku = Heroku(app)
 app.secret_key = "secret_key"
 Db.init_app(app)
 
